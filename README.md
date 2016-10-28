@@ -5,7 +5,7 @@ The project provides a V4-based middle layer of the EPICS archiver. The new exte
 * transition to the MongoDB-based indexing service of the Channel Archiver
 * integration of historical control data and metadata stores of experimental facilities 
 
-Its interface is described in the eapy module (https://github.com/epics-extensions/eapy).
+Its Python interface is described in the eapy module (https://github.com/epics-extensions/eapy).
 
 ### Prerequisites: 
 
