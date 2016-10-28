@@ -1,0 +1,103 @@
+
+
+namespace ea4 { namespace pva {
+
+template <class value_type, class dbr_type, class pvarray_type> 
+int DbrBuilderCLS::getDBRs(PVStructurePtr& pvResult){
+
+  // std::string txt;
+  // printf("end: %s\n", epicsTimeTxt(endTime, txt));
+
+  int num_vals = 0;     
+
+/*    
+
+  std::vector<short>& stats = *shared_stats.get();
+  std::vector<short>& sevrs = *shared_sevrs.get();
+  std::vector<int>& secs    = *shared_secs.get();
+  std::vector<int>& nanos   = *shared_nanos.get();
+
+  std::tr1::shared_ptr< std::vector<value_type> > 
+     shared_values (new std::vector<value_type>(0));
+  std::vector<value_type>& values = *shared_values.get();
+
+  data = reader->get();
+ 
+  while (num_vals < count && data) {
+
+    if(endTime.get()){
+	if(!(RawValue::getTime(data) < *(endTime.get())) ) break;
+    }
+
+    dbr_type* dbrData = (dbr_type *) data;
+
+    stats.push_back(dbrData->status);
+    sevrs.push_back(dbrData->severity);
+
+    secs.push_back(dbrData->stamp.secPastEpoch);
+    nanos.push_back(dbrData->stamp.nsec);
+
+    values.push_back(dbrData->value);	
+                 
+    ++num_vals;
+    data = reader->next();
+  }
+
+  // Prepare PVStructure
+
+  epics::pvData::PVStringPtr nameField = pvResult->getStringField("name");
+  nameField->put(name.c_str());
+
+  epics::pvData::PVStructurePtr metaField = pvResult->getStructureField("meta");
+  setMeta(metaField);
+
+  epics::pvData::PVIntPtr typeField = pvResult->getIntField("type");
+  typeField->put(pvType);
+
+  epics::pvData::PVIntPtr countField = pvResult->getIntField("count");
+  countField->put(pvCount);
+
+  epics::pvData::PVIntPtr sizeField = pvResult->getIntField("size");
+  sizeField->put(num_vals);
+
+  // dbrs
+
+  epics::pvData::PVStructurePtr dbrsField = pvResult->getStructureField("dbrs");
+
+  epics::pvData::PVShortArrayPtr statsField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVShortArray>(
+	dbrsField->getScalarArrayField("stats", epics::pvData::pvShort)); 
+
+  statsField->shareData(shared_stats, shared_stats->size(), num_vals);
+
+ epics::pvData::PVShortArrayPtr sevrsField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVShortArray>(
+	dbrsField->getScalarArrayField("sevrs", epics::pvData::pvShort)); 
+  sevrsField->shareData(shared_sevrs, shared_sevrs->size(), num_vals);
+
+  epics::pvData::PVIntArrayPtr secsField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVIntArray>(
+	dbrsField->getScalarArrayField("secs", epics::pvData::pvInt)); 
+  secsField->shareData(shared_secs, shared_secs->size(), num_vals);
+
+ epics::pvData::PVIntArrayPtr nanosField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVIntArray>(
+	dbrsField->getScalarArrayField("nanos", epics::pvData::pvInt)); 
+  nanosField->shareData(shared_nanos, shared_nanos->size(), num_vals);
+
+  std::tr1::shared_ptr<pvarray_type> valuesField = 
+    std::tr1::static_pointer_cast<pvarray_type>(
+	dbrsField->getScalarArrayField("values", pvType)); 
+  valuesField->shareData(shared_values, shared_values->size(), num_vals);
+ 
+#ifdef LOGFILE
+            LOG_MSG("%ld values\n", num_vals);
+#endif
+
+*/
+
+  return num_vals;   
+
+}
+
+}}

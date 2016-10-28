@@ -1,0 +1,146 @@
+
+
+namespace ea4 { namespace pva {
+
+template <class value_type, class dbr_type, class pvarray_type> 
+int DbrBuilderCLS::getDBRs(PVStructurePtr& pvResult){
+
+  // std::string txt;
+  // printf("end: %s\n", epicsTimeTxt(endTime, txt));
+
+  int num_vals = 0;     
+
+  std::list<short> stats;
+  std::list<short> sevrs;
+  std::list<int> secs;
+  std::list<int> nanos;
+
+  std::list<value_type> values;
+
+  data = reader->get();
+ 
+  while (num_vals < count && data) {
+
+    if(endTime.get()){
+	if(!(RawValue::getTime(data) < *(endTime.get())) ) break;
+    }
+
+    dbr_type* dbrData = (dbr_type *) data;
+
+    stats.push_back(dbrData->status);
+    sevrs.push_back(dbrData->severity);
+
+    secs.push_back(dbrData->stamp.secPastEpoch);
+    nanos.push_back(dbrData->stamp.nsec);
+
+    values.push_back(dbrData->value);	
+                 
+    ++num_vals;
+    data = reader->next();
+  }
+
+  // Prepare PVStructure
+
+  epics::pvData::PVStringPtr nameField = pvResult->getStringField("name");
+  nameField->put(name.c_str());
+
+  epics::pvData::PVStructurePtr metaField = pvResult->getStructureField("meta");
+  setMeta(metaField);
+
+  epics::pvData::PVIntPtr typeField = pvResult->getIntField("type");
+  typeField->put(pvType);
+
+  epics::pvData::PVIntPtr countField = pvResult->getIntField("count");
+  countField->put(pvCount);
+
+  epics::pvData::PVIntPtr sizeField = pvResult->getIntField("size");
+  sizeField->put(num_vals);
+
+  // copy into shared_vector (!) : needs to be fixed in the HDF5-based version
+
+  int i;
+
+  epics::pvData::PVShortArray::svector vstats;
+  vstats.resize(stats.size());
+
+  i = 0;
+  for(std::list<short>::iterator it = stats.begin(); it != stats.end(); it++){
+   vstats[i++] = *it;
+  }
+  epics::pvData::PVShortArray::const_svector cstats(freeze(vstats));
+  
+  epics::pvData::PVShortArray::svector vsevrs;
+  vsevrs.resize(sevrs.size());
+
+  i = 0;
+  for(std::list<short>::iterator it = sevrs.begin(); it != sevrs.end(); it++){
+   vsevrs[i++] = *it;
+  }
+  epics::pvData::PVShortArray::const_svector csevrs(freeze(vsevrs));
+
+  epics::pvData::PVIntArray::svector vsecs;
+  vsecs.resize(secs.size());
+
+  i = 0;
+  for(std::list<int>::iterator it = secs.begin(); it != secs.end(); it++){
+   vsecs[i++] = *it;
+  }
+  epics::pvData::PVIntArray::const_svector csecs(freeze(vsecs));
+
+  epics::pvData::PVIntArray::svector vnanos;
+  vnanos.resize(nanos.size());
+
+  i = 0;
+  for(std::list<int>::iterator it = nanos.begin(); it != nanos.end(); it++){
+   vnanos[i++] = *it;
+  }
+  epics::pvData::PVIntArray::const_svector cnanos(freeze(vnanos));
+
+  typename pvarray_type::svector vvalues;
+  vvalues.resize(values.size());
+
+  i = 0;
+  typename std::list<value_type>::iterator iv;
+  for(iv = values.begin(); iv != values.end(); iv++){
+   vvalues[i++] = *iv;
+  }
+  typename pvarray_type::const_svector cvalues(freeze(vvalues));
+
+  // dbrs
+
+  epics::pvData::PVStructurePtr dbrsField = pvResult->getStructureField("dbrs");
+
+  epics::pvData::PVShortArrayPtr statsField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVShortArray>(
+	dbrsField->getScalarArrayField("stats", epics::pvData::pvShort)); 
+  statsField->replace(cstats);
+
+ epics::pvData::PVShortArrayPtr sevrsField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVShortArray>(
+	dbrsField->getScalarArrayField("sevrs", epics::pvData::pvShort)); 
+  sevrsField->replace(csevrs);
+
+  epics::pvData::PVIntArrayPtr secsField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVIntArray>(
+	dbrsField->getScalarArrayField("secs", epics::pvData::pvInt)); 
+  secsField->replace(csecs);
+
+ epics::pvData::PVIntArrayPtr nanosField = 
+    std::tr1::static_pointer_cast<epics::pvData::PVIntArray>(
+	dbrsField->getScalarArrayField("nanos", epics::pvData::pvInt)); 
+  nanosField->replace(cnanos);
+
+  std::tr1::shared_ptr<pvarray_type> valuesField = 
+    std::tr1::static_pointer_cast<pvarray_type>(
+	dbrsField->getScalarArrayField("values", pvType)); 
+  valuesField->replace(cvalues);
+
+#ifdef LOGFILE
+            LOG_MSG("%ld values\n", num_vals);
+#endif
+
+  return num_vals;   
+
+}
+
+}}

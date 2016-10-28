@@ -1,0 +1,98 @@
+// -*- c++ -*-
+
+#ifndef __RAW_DATA_READER_EA3_H__
+#define __RAW_DATA_READER_EA3_H__
+
+#include <tr1/memory>
+
+// tools
+#include "tools/ToolsConfig.h"
+#include "tools/AutoPtr.h"
+
+// storage
+#include "storage/RawDataReader.h"
+#include "storage/CtrlInfo.h"
+
+typedef std::tr1::shared_ptr<Index> IndexPtr;
+
+/// \addtogroup Storage
+/// @{
+
+/** An implementation of the DataReader for raw data.
+ *  <p>
+ *  It reads the original samples from a 'full' index.
+ *  No averaging, no support for 'shallow' indices.
+ */
+class RawDataReaderEA3 : public DataReader
+{
+public:
+
+  /// Constructor
+  RawDataReaderEA3(IndexPtr index, RawDataReader::PrvData* data);
+
+  /// Destructor 
+  virtual ~RawDataReaderEA3();
+    
+  /// Locate data
+  virtual const RawValue::Data *find(const stdString &channel_name,
+                                     const epicsTime *start);
+
+  /// Name of the channel, i.e. the one passed to find()
+  virtual const std::string& getName() const;  
+    
+  /// Obtain the next value.                                 
+  virtual const RawValue::Data *next();
+
+
+  /// Current value.    
+  virtual const RawValue::Data *get() const;
+    
+  /// The dbr_time_xxx type
+  virtual DbrType getType() const;
+
+  /// array size  
+  virtual DbrCount getCount() const;
+
+  /// The meta information for the channel
+  virtual const CtrlInfo& getInfo() const;
+
+  /// next() updates this if dbr_type/count changed.   
+  virtual bool changedType();
+
+  /// next() updates this if ctrl_info changed.
+  virtual bool changedInfo();
+
+ public:
+
+    /// Read a value from binary file.
+    ///
+    /// size: pre-calculated from type, count.
+    ///
+    /// @exception GenericException on error.
+    void read(DbrType type, DbrCount count,
+	      size_t size, RawValue::Data *value,
+	      class DataFile *datafile, FileOffset offset);
+
+private:
+ 
+    void getHeader(const stdString &basename, FileOffset offset);
+    const RawValue::Data *findSample(const epicsTime &start);
+    const RawValue::Data *nextFromDatablock();
+
+private:
+
+  // Index
+  IndexPtr index;  
+
+  // Current sample
+  size_t raw_value_size;
+  AutoPtr<class DataHeader> header;
+  size_t val_idx; // current index in data buffer
+
+  RawDataReader::PrvData* prvData;
+
+};
+
+/// @}
+
+#endif

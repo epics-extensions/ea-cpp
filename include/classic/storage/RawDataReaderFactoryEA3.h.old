@@ -1,0 +1,25 @@
+#ifndef __EA4_STORAGE_RAW_DATA_READER_FACTORY_EA3_H
+#define __EA4_STORAGE_RAW_DATA_READER_FACTORY_EA3_H
+
+#include <tr1/memory>
+
+#include "storage/RawDataReaderRegistry.h"
+
+typedef std::tr1::shared_ptr<Index> IndexPtr;
+
+namespace ea4 { namespace storage {
+
+/** Factory of RawDataReaderEA3s  */
+class RawDataReaderFactoryEA3 : public RawDataReaderFactory {
+
+ public:
+
+  /** factory method */
+  virtual DataReader* 
+    createReader(IndexPtr index, RawDataReader::PrvData* prvData);
+
+};
+
+}}
+
+#endif

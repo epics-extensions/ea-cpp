@@ -1,0 +1,14 @@
+Common applications and/or configuration files:
+
+1. daemon - scripts and configuration files of the archive daemon,
+            see Manual, ch 6.2.3
+
+2. engine - configuration file of the archive engine, 
+            see Manual, ch. 3
+            
+3. indextool - command-line tool for combining multiple indices 
+               into a Master file, see Manual, ch. 5.1
+
+4. pva - configuration file of the RPC-based data retrieval service, 
+         see Manual, ch 4.3.3
+

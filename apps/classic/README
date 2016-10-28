@@ -1,0 +1,11 @@
+Applications:
+
+1. daemon - archive daemon script for managing engines and
+            data servers, see Manual, ch. 6
+
+2. engine - archive engine, see Manual, ch. 3
+
+3. export - command-line tool for local tests, see Manual, ch. 4.2
+            
+4. pva    - the EPICS4 RPC-based data retrieval service, see Manual, ch 4.3.3
+

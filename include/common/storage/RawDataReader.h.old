@@ -1,0 +1,108 @@
+// -*- c++ -*-
+
+#ifndef __RAW_DATA_READER_H__
+#define __RAW_DATA_READER_H__
+
+// tools
+#include "tools/ToolsConfig.h"
+#include "tools/AutoPtr.h"
+
+// storage
+#include "storage/DataReader.h"
+#include "storage/CtrlInfo.h"
+
+/// \addtogroup Storage
+/// @{
+
+/** An implementation of the DataReader for raw data.
+ *  <p>
+ *  It reads the original samples from a 'full' index.
+ *  No averaging, no support for 'shallow' indices.
+ */
+class RawDataReader : public DataReader
+{
+public:
+
+  /// Constructor
+  RawDataReader(Index &index);
+
+  /// Destructor 
+  virtual ~RawDataReader();
+
+  /// Locate data.
+  virtual const RawValue::Data *find(const stdString &channel_name,
+				     const epicsTime *start);
+    
+  /// Name of the channel, i.e. the one passed to find()
+  virtual const std::string& getName() const;  
+
+  /// Obtain the next value.
+  virtual const RawValue::Data *next();
+
+  /// Current value.    
+  virtual const RawValue::Data *get() const;
+    
+  /// The dbr_time_xxx type
+  virtual DbrType getType() const;
+
+  /// array size  
+  virtual DbrCount getCount() const;
+
+  /// The meta information for the channel
+  virtual const CtrlInfo& getInfo() const;
+
+  /// next() updates this if dbr_type/count changed.   
+  virtual bool changedType();
+
+  /// next() updates this if ctrl_info changed.
+  virtual bool changedInfo();
+
+public:
+
+  /// Private Data of RawDataReader
+  struct PrvData {
+
+    void init();
+
+    /// Channel found in index
+    AutoPtr<Index::Result>    index_result;  
+
+    /// Current data block info for that channel  
+    AutoPtr<RTree::Datablock> datablock;
+    
+    /// Name of channel from last find() call
+    std::string channel_name;
+    
+    // Meta-info for current sample  
+  
+    DbrType dbr_type;          ///< dbr type
+    DbrCount dbr_count;        ///< dbr count
+    CtrlInfo ctrl_info;        ///< ctrl info
+    bool type_changed;         ///< flag for type changed
+    bool ctrl_info_changed;    ///< flag for ctrl info changed
+    double period;             ///< period
+
+    /// Current sample
+    RawValueAutoPtr data;
+ 
+  };
+
+protected:
+
+  bool findDataBlock(const std::string& channel_name,
+		     const epicsTime* start);
+
+protected:
+
+  // Index
+  Index& index;
+
+  PrvData prvData;
+
+  DataReader* dataReader;
+
+};
+
+/// @}
+
+#endif

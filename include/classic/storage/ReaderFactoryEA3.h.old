@@ -1,0 +1,36 @@
+#ifndef EA4_READER_FACTORY_EA3_H
+#define EA4_READER_FACTORY_EA3_H
+
+#include "storage/ReaderFactory.h"
+
+namespace ea4 { namespace pva {
+
+class ReaderFactoryEA3 {
+
+ public:
+
+  static ReaderFactoryEA3* getInstance();
+
+ public:
+
+  DataReader* createDataReader(Index& index,
+			       const epicsTime& start, 
+			       const epicsTime& end,
+			       int count, 
+			       int how);
+
+
+ private:
+
+  ReaderFactoryEA3();
+
+ private:
+
+  static ReaderFactoryEA3* theInstance;
+
+};
+
+
+  }}
+
+#endif

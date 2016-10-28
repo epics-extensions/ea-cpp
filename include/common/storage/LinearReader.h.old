@@ -1,0 +1,40 @@
+// -*- c++ -*-
+
+#ifndef __LINEAR_READER_H__
+#define __LINEAR_READER_H__
+
+#include "storage/AverageReader.h"
+
+/// \addtogroup Storage
+/// @{
+
+/// Reads data from storage with linear interpolation.
+///
+/// The LinearReader is an implementation of a DataReader
+/// that aligns data onto multiples of 'delta' seconds on the
+/// time axis via linear interpolation.
+class LinearReader : public AverageReader {
+
+public:
+
+  /// Create a reader for an index.
+  ///
+  /// @param index index file
+  /// @param delta The interpolation time interval in seconds.
+  LinearReader(Index &index, double delta);
+    
+  /// Returns a sample of the specified channel
+  const RawValue::Data* find(const std::string& channel_name,
+                               const epicsTime* start);
+
+  /// Returns a channel name
+  const std::string& getName() const;
+    
+  /// Return the next sample
+  const RawValue::Data* next();
+
+};
+
+/// @}
+
+#endif

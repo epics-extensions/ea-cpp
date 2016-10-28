@@ -1,0 +1,11 @@
+1. ArchiveIndexTool: command-line tool for combining multiple indices 
+into a Master file, see Manual, ch. 5.1
+
+usage: ArchiveIndexTool [Options] <archive list file> <output index>
+
+2. ArchiveIndexMakeConfig: a Perl script that generates 
+a config file for the ArchiveIndexTool based on a DTD 
+and a list of index files (see Manual, ch. 5.1.1)
+
+usage: ArchiveIndexMakeConfig [-d DTD] index {index}
+
